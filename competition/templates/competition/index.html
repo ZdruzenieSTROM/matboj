@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block title %}Matboje{% endblock %}
+
+{% block content %}
+<h1>Matboje</h1>
+<div class="list-group">
+{% for competition in competitions %}
+<a class="list-group-item list-group-item-action" href="{% url 'competition:competition' competition.pk %}">{{ competition }}</a>
+{% empty %}
+<a class="list-group-item list-group-item-action" href="{% url 'admin:competition_competition_add' %}">Vytvoriť matboj</a>
+{% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<meta http-equiv="refresh" content="30" />
+{% endblock %}
+
+{% block title %}{{ competition }} &ndash; Výsledky{% endblock %}
+
+{% block content %}
+<table class="table">
+<thead>
+    <tr>
+        <th scope="col">Poradie</th>
+        <th scope="col">Meno</th>
+        <th scope="col">Skóre</th>
+    </tr>
+</thead>
+<tbody>
+{% for ranking in rankings %}
+    <tr>
+        <th scope="row">{{ ranking.rank }}</th>
+        <td>{{ ranking.participant }}</td>
+        <td>{{ ranking.score }}</td>
+    </tr>
+{% endfor %}
+</tbody>
+</table>
+{% endblock %}
