@@ -1,5 +1,6 @@
 __pycache__
 .vscode
 db.sqlite3
+dist.zip
 */migrations/*
 !*/migrations/__init__.py
