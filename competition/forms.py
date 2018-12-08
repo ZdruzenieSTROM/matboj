@@ -13,9 +13,14 @@ class CompetitionImportForm(forms.Form):
         self.fields['participant_list'].widget.attrs.update({'class': 'form-control'})
 
     def clean_participant_list(self):
-        participant_list = self.cleaned_data['participant_list']
+        competition = self.cleaned_data['competition']
+        participant_string = self.cleaned_data['participant_list']
 
-        participant_list = participant_list.split('\n')
+        participant_list = list(filter(lambda p: len(p) > 0, participant_string.splitlines()))
+
+        for participant in participant_list:
+            if Participant.objects.filter(competition=competition, name=participant).exists():
+                raise forms.ValidationError('Účastník {} už existuje!'.format(participant))
 
         return participant_list
 
@@ -23,13 +28,10 @@ class CompetitionImportForm(forms.Form):
         competition = self.cleaned_data['competition']
         participant_list = self.cleaned_data['participant_list']
 
-        counter = 0
-
         for participant in participant_list:
             Participant.objects.create(name=participant, competition=competition)
-            counter += 1
 
-        return counter
+        return len(participant_list)
 
 class CompetitionSubmitForm(forms.ModelForm):
     class Meta:

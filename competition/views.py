@@ -46,7 +46,7 @@ class CompetitionImportView(FormView, SingleObjectMixin):
     def form_valid(self, form):
         imported = form.save()
 
-        messages.success(self.request, 'Úspešne pridaných {} účastníkov'.format(imported))
+        messages.success(self.request, 'Počet pridaných účastníkov: {}'.format(imported))
 
         return super(CompetitionImportView, self).form_valid(form)
 
