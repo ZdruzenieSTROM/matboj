@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Vytvorí zipko s nastaveným serverom a skriptom čo ho spustí na 64-bitových? linuxoch
 
 mkdir dist
@@ -9,10 +11,10 @@ rm -r competition/migrations/*
 touch competition/migrations/__init__.py
 rm -r matboj/__pycache__
 
-echo -e "source environment/bin/activate\npython3 manage.py runserver 0.0.0.0:8000\ndeactivate" > run.sh
+echo -e "#!/bin/bash\nsource environment/bin/activate\npython3 manage.py runserver 0.0.0.0:8000\ndeactivate" > run.sh
 chmod +x run.sh
 
-python3 -m virtualenv environment
+python3 -m virtualenv --python=$(which python3) environment
 source environment/bin/activate
 
 pip3 install -r requirements.txt
@@ -25,6 +27,6 @@ deactivate
 
 cd ..
 
-zip -r dist.zip dist > /dev/null
+zip -r dist.zip dist
 
 rm -r dist
