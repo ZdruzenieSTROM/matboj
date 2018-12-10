@@ -1,3 +1,5 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django import forms
 
 from .models import Competition, Match, Participant
@@ -5,28 +7,40 @@ from .models import Competition, Match, Participant
 
 class CompetitionImportForm(forms.Form):
     competition = forms.ModelChoiceField(Competition.objects.all(), widget=forms.HiddenInput)
-    participant_list = forms.CharField(widget=forms.Textarea)
+    participant_list = forms.CharField(widget=forms.Textarea, label='Zoznam nových účastníkov')
 
     def __init__(self, *args, **kwargs):
         super(CompetitionImportForm, self).__init__(*args, **kwargs)
 
-        self.fields['participant_list'].widget.attrs.update({'class': 'form-control'})
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(Submit('submit', 'Importuj'))
 
     def clean_participant_list(self):
-        competition = self.cleaned_data['competition']
-        participant_string = self.cleaned_data['participant_list']
+        competition = self.cleaned_data.get('competition')
+        participant_string = self.cleaned_data.get('participant_list')
 
-        participant_list = list(filter(lambda p: len(p) > 0, participant_string.splitlines()))
+        participant_list = []
 
-        for participant in participant_list:
-            if Participant.objects.filter(competition=competition, name=participant).exists():
-                raise forms.ValidationError('Účastník {} už existuje!'.format(participant))
+        for line in participant_string.splitlines():
+            if not line.strip():
+                continue
+
+            line = line.strip()
+
+            if line in participant_list:
+                raise forms.ValidationError('Účastník {} je v zozname dvakrát!'.format(line))
+
+            participant_list.append(line)
+
+            if Participant.objects.filter(competition=competition, name=line).exists():
+                raise forms.ValidationError('Účastník {} už existuje!'.format(line))
 
         return participant_list
 
     def save(self):
-        competition = self.cleaned_data['competition']
-        participant_list = self.cleaned_data['participant_list']
+        competition = self.cleaned_data.get('competition')
+        participant_list = self.cleaned_data.get('participant_list')
 
         for participant in participant_list:
             Participant.objects.create(name=participant, competition=competition)
@@ -36,22 +50,39 @@ class CompetitionImportForm(forms.Form):
 class CompetitionSubmitForm(forms.ModelForm):
     class Meta:
         model = Match
-        fields = ['winner', 'loser', 'competition']
+        fields = ['competition', 'winner', 'loser']
 
     def __init__(self, *args, **kwargs):
         super(CompetitionSubmitForm, self).__init__(*args, **kwargs)
 
         self.fields['competition'].widget = forms.HiddenInput()
-        self.fields['winner'].widget.attrs.update({'class': 'form-control'})
-        self.fields['loser'].widget.attrs.update({'class': 'form-control'})
 
-    def clean(self):
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.add_input(Submit('submit', 'Odovzdaj'))
+
+    def clean_winner(self):
         cleaned_data = super(CompetitionSubmitForm, self).clean()
 
-        winner = cleaned_data['winner']
-        loser = cleaned_data['loser']
+        competition = cleaned_data.get('competition')
+        winner = cleaned_data.get('winner')
+
+        if winner.competition != competition:
+            raise forms.ValidationError('Tento účastník nepatrí k tomuto matboju!')
+
+        return winner
+
+    def clean_loser(self):
+        cleaned_data = super(CompetitionSubmitForm, self).clean()
+
+        competition = cleaned_data.get('competition')
+        winner = cleaned_data.get('winner')
+        loser = cleaned_data.get('loser')
+
+        if loser.competition != competition:
+            raise forms.ValidationError('Tento účastník nepatrí k tomuto matboju!')
 
         if winner == loser:
-            raise forms.ValidationError('Výherca je tá istá osoba ako porazený')
+            raise forms.ValidationError('Vyber niekoho iného ako víťaza!')
 
-        return cleaned_data
+        return loser

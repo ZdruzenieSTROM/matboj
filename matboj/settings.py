@@ -26,7 +26,7 @@ SECRET_KEY = 'z@$(ydcoj8o5x%0$93%%&x+cm80(jmo5gx+#fo)dpp2p28c!bx'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-	"*",
+    "*",
 ]
 
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
     'competition.apps.CompetitionConfig',
 ]
 
@@ -121,3 +122,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+# Crispy forms
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

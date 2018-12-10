@@ -24,13 +24,15 @@ class Match(models.Model):
     winner = models.ForeignKey(
         'competition.Participant',
         on_delete=models.CASCADE,
-        related_name='winner'
+        related_name='winner',
+        verbose_name='víťaz'
     )
 
     loser = models.ForeignKey(
         'competition.Participant',
         on_delete=models.CASCADE,
-        related_name='loser'
+        related_name='loser',
+        verbose_name='porazený'
     )
 
     time = models.DateTimeField(auto_now_add=True)
