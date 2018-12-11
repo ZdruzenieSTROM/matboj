@@ -10,6 +10,24 @@ from .forms import CompetitionImportForm, CompetitionSubmitForm
 from .models import Competition, Match, Participant
 
 
+class SingleObjectFormView(FormView, SingleObjectMixin):
+    object_field_name = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        return super(SingleObjectFormView, self).dispatch(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwargs = super(SingleObjectFormView, self).get_form_kwargs()
+
+        if self.request.method in ('POST', 'PUT'):
+            data = kwargs['data'].copy()
+            data[self.object_field_name] = str(self.object.pk)
+            kwargs['data'] = data
+
+        return kwargs
+
 class CompetitionListView(ListView):
     model = Competition
     context_object_name = 'competitions'
@@ -22,7 +40,7 @@ class CompetitionDetailView(DetailView):
 
     template_name = 'competition/competition.html'
 
-class CompetitionImportView(FormView, SingleObjectMixin):
+class CompetitionImportView(SingleObjectFormView):
     model = Competition
     context_object_name = 'competition'
 
@@ -30,15 +48,7 @@ class CompetitionImportView(FormView, SingleObjectMixin):
 
     form_class = CompetitionImportForm
 
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-
-        return super(CompetitionImportView, self).dispatch(request, *args, **kwargs)
-
-    def get_initial(self):
-        initial = super(CompetitionImportView, self).get_initial()
-        initial.update({'competition': self.object})
-        return initial
+    object_field_name = 'competition'
 
     def get_success_url(self):
         return reverse('competition:competition', kwargs={'pk': self.kwargs['pk']})
@@ -89,7 +99,7 @@ class CompetitionResultsView(DetailView):
 
         return context_data
 
-class CompetitionSubmitView(FormView, SingleObjectMixin):
+class CompetitionSubmitView(SingleObjectFormView):
     model = Competition
     context_object_name = 'competition'
 
@@ -97,33 +107,25 @@ class CompetitionSubmitView(FormView, SingleObjectMixin):
 
     form_class = CompetitionSubmitForm
 
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-
-        return super(CompetitionSubmitView, self).dispatch(request, *args, **kwargs)
+    object_field_name = 'competition'
 
     def get_context_data(self, **kwargs):
         context_data = super(CompetitionSubmitView, self).get_context_data(**kwargs)
-        context_data['history'] = Match.objects.order_by('-time')[:10]
+        context_data['history'] = Match.objects.filter(competition=self.object).order_by('-time')[:10]
         return context_data
 
     def get_success_url(self):
         return reverse('competition:submit', kwargs={'pk': self.kwargs['pk']})
 
-    def get_initial(self):
-        initial = super(CompetitionSubmitView, self).get_initial()
-        initial.update({'competition': self.object})
-        return initial
-
     def get_form(self, form_class=None):
         form = super(CompetitionSubmitView, self).get_form(form_class=form_class)
 
         form.fields['winner'].queryset = Participant.objects.filter(
-            competition=form.initial['competition']
+            competition=self.object
         )
 
         form.fields['loser'].queryset = Participant.objects.filter(
-            competition=form.initial['competition']
+            competition=self.object
         )
 
         return form
