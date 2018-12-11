@@ -13,17 +13,17 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-sm sticky-top navbar-dark bg-dark">
+    <a class="navbar-brand" href="{% url 'competition:index' %}">Matboje</a>
     <button class="navbar-toggler ml-auto" type="button" data-toggle="collapse" data-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbar-content">
         <div class="navbar-nav">
-        <a class="nav-item nav-link {% if not competition %}active{% endif %}" href="{% url 'competition:index' %}">Matboje</a>
-        <a class="nav-item nav-link" href="{% url 'admin:index' %}">Admin</a>
+            <a class="nav-item nav-link" href="{% url 'admin:index' %}">Admin</a>
         </div>
         {% if competition %}
         <div class="navbar-nav ml-auto">
-        <a class="nav-item nav-link active" href="{% url 'competition:competition' competition.pk %}">{{ competition }}</a>
+            <a class="nav-item nav-link active" href="{% url 'competition:competition' competition.pk %}">{{ competition }}</a>
         </div>
         {% endif %}
     </div>
