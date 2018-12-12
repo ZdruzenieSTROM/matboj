@@ -31,17 +31,20 @@ class SingleObjectFormView(FormView, SingleObjectMixin):
 
         return kwargs
 
+
 class CompetitionListView(ListView):
     model = Competition
     context_object_name = 'competitions'
 
     template_name = 'competition/index.html'
 
+
 class CompetitionDetailView(DetailView):
     model = Competition
     context_object_name = 'competition'
 
     template_name = 'competition/competition.html'
+
 
 class CompetitionImportView(SingleObjectFormView):
     model = Competition
@@ -59,9 +62,11 @@ class CompetitionImportView(SingleObjectFormView):
     def form_valid(self, form):
         imported = form.save()
 
-        messages.success(self.request, 'Počet pridaných účastníkov: {}'.format(imported))
+        messages.success(
+            self.request, 'Počet pridaných účastníkov: {}'.format(imported))
 
         return super(CompetitionImportView, self).form_valid(form)
+
 
 class CompetitionResultsView(DetailView):
     model = Competition
@@ -70,18 +75,22 @@ class CompetitionResultsView(DetailView):
     template_name = 'competition/results.html'
 
     def get_context_data(self, **kwargs):
-        context_data = super(CompetitionResultsView, self).get_context_data(**kwargs)
+        context_data = super(CompetitionResultsView,
+                             self).get_context_data(**kwargs)
 
         scores = {
             participant: 1000
             for participant in self.object.participant_set.all()
         }
 
-        matches = Match.objects.filter(competition=self.object).order_by('time')
+        matches = Match.objects.filter(
+            competition=self.object).order_by('time')
 
         for match in matches:
-            scores[match.winner] = scores[match.winner] + floor(0.1*scores[match.loser])
-            scores[match.loser] = scores[match.loser] - floor(0.1*scores[match.loser])
+            scores[match.winner] = scores[match.winner] + \
+                floor(0.1*scores[match.loser])
+            scores[match.loser] = scores[match.loser] - \
+                floor(0.1*scores[match.loser])
 
         rankings = sorted(
             [
@@ -102,6 +111,7 @@ class CompetitionResultsView(DetailView):
 
         return context_data
 
+
 class CompetitionSubmitView(SingleObjectFormView):
     model = Competition
     context_object_name = 'competition'
@@ -113,15 +123,18 @@ class CompetitionSubmitView(SingleObjectFormView):
     object_field_name = 'competition'
 
     def get_context_data(self, **kwargs):
-        context_data = super(CompetitionSubmitView, self).get_context_data(**kwargs)
-        context_data['history'] = Match.objects.filter(competition=self.object).order_by('-time')
+        context_data = super(CompetitionSubmitView,
+                             self).get_context_data(**kwargs)
+        context_data['history'] = Match.objects.filter(
+            competition=self.object).order_by('-time')
         return context_data
 
     def get_success_url(self):
         return reverse('competition:submit', kwargs={'pk': self.kwargs['pk']})
 
     def get_form(self, form_class=None):
-        form = super(CompetitionSubmitView, self).get_form(form_class=form_class)
+        form = super(CompetitionSubmitView, self).get_form(
+            form_class=form_class)
 
         form.fields['winner'].queryset = Participant.objects.filter(
             competition=self.object

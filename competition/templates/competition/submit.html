@@ -10,12 +10,12 @@
 
 {% if history %}
 <div class="list-group">
-{% for match in history|slice:":10" %}
-<a class="list-group-item list-group-item-action" target="_blank" href="{% url 'admin:competition_match_change' match.pk %}">
-    <strong>Víťaz:</strong> {{ match.winner }} | <strong>Porazený:</strong> {{ match.loser }}
-    <span class="float-right">{{ match.time|date:"H:i:s (d. m. Y)" }}</span>
-</a>
-{% endfor %}
+    {% for match in history|slice:":10" %}
+    <a class="list-group-item list-group-item-action" target="_blank" href="{% url 'admin:competition_match_change' match.pk %}">
+        <strong>Víťaz:</strong> {{ match.winner }} | <strong>Porazený:</strong> {{ match.loser }}
+        <span class="float-right">{{ match.time|date:"H:i:s (d. m. Y)" }}</span>
+    </a>
+    {% endfor %}
 </div>
 {% endif %}
 {% endblock %}
