@@ -1,6 +1,7 @@
 #!/bin/bash
 
-# Vytvorí zipko s nastaveným serverom a skriptom čo ho spustí na 64-bitových? linuxoch
+# Vytvorí zipko s nastaveným serverom a skriptom čo ho spustí na linuxoch
+# Treba mať nainštalovaný trojkový python
 
 cd "$(dirname "$0")"
 

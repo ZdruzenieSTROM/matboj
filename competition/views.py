@@ -26,6 +26,9 @@ class SingleObjectFormView(FormView, SingleObjectMixin):
             data[self.object_field_name] = str(self.object.pk)
             kwargs['data'] = data
 
+        if self.request.method == 'GET':
+            kwargs['initial'].update({self.object_field_name: self.object})
+
         return kwargs
 
 class CompetitionListView(ListView):
@@ -111,7 +114,7 @@ class CompetitionSubmitView(SingleObjectFormView):
 
     def get_context_data(self, **kwargs):
         context_data = super(CompetitionSubmitView, self).get_context_data(**kwargs)
-        context_data['history'] = Match.objects.filter(competition=self.object).order_by('-time')[:10]
+        context_data['history'] = Match.objects.filter(competition=self.object).order_by('-time')
         return context_data
 
     def get_success_url(self):
