@@ -26,8 +26,8 @@
             </div>
             {% if competition %}
             <div class="navbar-nav ml-auto">
-                <a class="nav-item nav-link active" href="{% url 'competition:competition' competition.pk %}">{{
-                    competition }}</a>
+                <a class="nav-item nav-link active" href="{% url 'competition:competition' competition.pk %}">
+                    {{ competition }}</a>
             </div>
             {% endif %}
         </div>
