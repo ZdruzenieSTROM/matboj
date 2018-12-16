@@ -125,8 +125,10 @@ class CompetitionSubmitView(SingleObjectFormView):
     def get_context_data(self, **kwargs):
         context_data = super(CompetitionSubmitView,
                              self).get_context_data(**kwargs)
+
         context_data['history'] = Match.objects.filter(
             competition=self.object).order_by('-time')
+
         return context_data
 
     def get_success_url(self):
@@ -137,12 +139,10 @@ class CompetitionSubmitView(SingleObjectFormView):
             form_class=form_class)
 
         form.fields['winner'].queryset = Participant.objects.filter(
-            competition=self.object
-        )
+            competition=self.object)
 
         form.fields['loser'].queryset = Participant.objects.filter(
-            competition=self.object
-        )
+            competition=self.object)
 
         return form
 

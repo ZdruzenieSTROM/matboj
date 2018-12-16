@@ -25,6 +25,7 @@ pip3 install -r requirements.txt
 
 python3 manage.py makemigrations --noinput
 python3 manage.py migrate --noinput
+python3 manage.py collectstatic
 python3 manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('admin', '', 'gumibanan')"
 
 deactivate
