@@ -4,6 +4,18 @@ Malý server na vyhodnocovanie matbojov hlavne na minisústredkách. Určený je
 
 ## Ako rozbehať?
 
+### Windows
+
+Ak máš nainštalovaný Git naklonuj si tento projekt cez git v príkazovom riadku:
+
+```
+git clone https://github.com/ZdruzenieSTROM/matboj
+```
+
+Ak Git nainštalovaný nemáš, klikni na zelené tlačidlo vpravo hore `Download ZIP`.
+
+### Linux
+
 Naklonuj si tento projekt cez git:
 
 ```
