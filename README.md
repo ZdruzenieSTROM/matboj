@@ -14,7 +14,7 @@ git clone https://github.com/ZdruzenieSTROM/matboj
 
 Ak Git nainštalovaný nemáš, klikni na zelené tlačidlo vpravo hore `Clone or download --> Download ZIP` a súbor ulož na disk C. Rozzipuj, choď do priečinka (mal by sa volať `matboj-master`) až kým neuvidíš súbory ako napríklad `manage.py`, skopíruj riadok ukazujúci cestu do priečinka (`C:\...`). Otvor príkazový riadok, napíš `cd `, nakopíruj cestu a spusti príkaz. 
 
-Spusti skript `setup.bat` cez administrátorský príkazový riadok, ktorý spraví potrebné nastavenia. Server sa potom zapína vygenerovaným skriptom `run.bat`. Účet do administrácie sa volá `admin` a heslo je `gumibanan`. Keď sa na teba nevedia ľudia pripojiť a máš Eset, [pridaj do Esetu pravidlo](https://support.eset.com/kb2843/?locale=en_US&viewlocale=sk_SK), kde povolíš všetky requesty (dnu aj von) pre port `80`. 
+Spusti skript `setup.bat`, ktorý spraví potrebné nastavenia. Server sa potom zapína skriptom `run.bat`. Účet do administrácie sa volá `admin` a heslo je `gumibanan`. Keď sa na teba nevedia ľudia pripojiť a máš Eset, [pridaj do Esetu pravidlo](https://support.eset.com/kb2843/?locale=en_US&viewlocale=sk_SK), kde povolíš všetky requesty (dnu aj von) pre port `80`. 
 
 ### Linux
 
