@@ -1,9 +1,11 @@
 from math import floor
 from operator import itemgetter
 
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Submit
 from django.contrib import messages
 from django.shortcuts import reverse
-from django.views.generic import DetailView, FormView, ListView
+from django.views.generic import CreateView, DetailView, FormView, ListView
 from django.views.generic.detail import SingleObjectMixin
 
 from .forms import CompetitionImportForm, CompetitionSubmitForm
@@ -44,6 +46,26 @@ class CompetitionDetailView(DetailView):
     context_object_name = 'competition'
 
     template_name = 'competition/competition.html'
+
+
+class CompetitionCreateView(CreateView):
+    model = Competition
+    fields = ['name']
+
+    template_name = 'competition/create.html'
+
+    def get_form(self, form_class=None):
+        form = super(CompetitionCreateView, self).get_form(
+            form_class=form_class)
+
+        form.helper = FormHelper()
+        form.helper.form_method = 'post'
+        form.helper.add_input(Submit('submit', 'Vytvoriť'))
+
+        return form
+
+    def get_success_url(self):
+        return reverse('competition:index')
 
 
 class CompetitionImportView(SingleObjectFormView):

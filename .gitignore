@@ -1,5 +1,8 @@
 __pycache__
-.vscode
 db.sqlite3
 */migrations/*
 !*/migrations/__init__.py
+pyenv
+static
+run.sh
+.vscode

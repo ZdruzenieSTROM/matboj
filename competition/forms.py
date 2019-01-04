@@ -1,3 +1,5 @@
+from operator import methodcaller
+
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
 from django import forms
@@ -24,21 +26,19 @@ class CompetitionImportForm(forms.Form):
 
         participant_list = []
 
-        for line in participant_string.splitlines():
-            if not line.strip():
+        for line in map(methodcaller('strip'), participant_string.splitlines()):
+            if not line:
                 continue
-
-            line = line.strip()
 
             if line in participant_list:
                 raise forms.ValidationError(
                     'Účastník {} je v zozname dvakrát!'.format(line))
 
-            participant_list.append(line)
-
             if Participant.objects.filter(competition=competition, name=line).exists():
                 raise forms.ValidationError(
                     'Účastník {} už existuje!'.format(line))
+
+            participant_list.append(line)
 
         return participant_list
 
