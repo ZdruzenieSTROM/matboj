@@ -21,26 +21,41 @@ class CompetitionImportForm(forms.Form):
         self.helper.add_input(Submit('submit', 'Importuj'))
 
     def clean_participant_list(self):
-        competition = self.cleaned_data.get('competition')
         participant_string = self.cleaned_data.get('participant_list')
 
         participant_list = []
+        errors = []
 
-        for line in map(methodcaller('strip'), participant_string.splitlines()):
-            if not line:
-                continue
-
+        for line in filter(lambda l: len(l) != 0, map(
+                methodcaller('strip'), participant_string.splitlines())):
             if line in participant_list:
-                raise forms.ValidationError(
-                    'Účastník {} je v zozname dvakrát!'.format(line))
+                error = "Účastník {} je v zozname viackrát!".format(line)
 
-            if Participant.objects.filter(competition=competition, name=line).exists():
-                raise forms.ValidationError(
-                    'Účastník {} už existuje!'.format(line))
+                if error not in errors:
+                    errors.append(error)
+
+                continue
 
             participant_list.append(line)
 
+        if errors:
+            raise forms.ValidationError(errors)
+
         return participant_list
+
+    def clean(self):
+        cleaned_data = super(CompetitionImportForm, self).clean()
+
+        competition = cleaned_data.get('competition')
+        participant_list = cleaned_data.get('participant_list')
+
+        if competition and participant_list:
+            for participant in participant_list:
+                if Participant.objects.filter(competition=competition, name=participant).exists():
+                    self.add_error('participant_list',
+                                   'Účastník {} už existuje!'.format(participant))
+
+        return cleaned_data
 
     def save(self):
         competition = self.cleaned_data.get('competition')
@@ -67,30 +82,16 @@ class CompetitionSubmitForm(forms.ModelForm):
         self.helper.form_method = 'post'
         self.helper.add_input(Submit('submit', 'Odovzdaj'))
 
-    def clean_winner(self):
-        cleaned_data = super(CompetitionSubmitForm, self).clean()
-
-        competition = cleaned_data.get('competition')
-        winner = cleaned_data.get('winner')
-
-        if winner.competition != competition:
-            raise forms.ValidationError(
-                'Tento účastník nepatrí k tomuto matboju!')
-
-        return winner
-
-    def clean_loser(self):
+    def clean(self):
         cleaned_data = super(CompetitionSubmitForm, self).clean()
 
         competition = cleaned_data.get('competition')
         winner = cleaned_data.get('winner')
         loser = cleaned_data.get('loser')
 
-        if loser.competition != competition:
-            raise forms.ValidationError(
-                'Tento účastník nepatrí k tomuto matboju!')
+        if all((competition, winner, loser)):
+            if winner == loser:
+                raise forms.ValidationError(
+                    'Víťaz a porazený sú tá istá osoba!')
 
-        if winner == loser:
-            raise forms.ValidationError('Vyber niekoho iného ako víťaza!')
-
-        return loser
+        return cleaned_data
