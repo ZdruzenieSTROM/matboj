@@ -12,6 +12,8 @@ class CompetitionImportForm(forms.Form):
         Competition.objects.all(), widget=forms.HiddenInput)
     participant_list = forms.CharField(
         widget=forms.Textarea, label='Zoznam nových účastníkov')
+    starting_points = forms.IntegerField(
+        required=False, label='Začiatočné body')
 
     def __init__(self, *args, **kwargs):
         super(CompetitionImportForm, self).__init__(*args, **kwargs)
@@ -60,10 +62,11 @@ class CompetitionImportForm(forms.Form):
     def save(self):
         competition = self.cleaned_data.get('competition')
         participant_list = self.cleaned_data.get('participant_list')
+        starting_points = self.cleaned_data.get('starting_points')
 
         for participant in participant_list:
             Participant.objects.create(
-                name=participant, competition=competition)
+                name=participant, competition=competition, starting_points=starting_points)
 
         return len(participant_list)
 

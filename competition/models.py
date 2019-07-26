@@ -3,6 +3,8 @@ from django.db import models
 
 class Competition(models.Model):
     name = models.CharField(max_length=100, verbose_name='Názov')
+    default_starting_points = models.PositiveIntegerField(
+        default=1000, verbose_name='Začiatočné body')
 
     def __str__(self):
         return "{}".format(self.name)
@@ -10,6 +12,7 @@ class Competition(models.Model):
 
 class Participant(models.Model):
     name = models.CharField(max_length=200)
+    starting_points = models.PositiveIntegerField(null=True)
 
     competition = models.ForeignKey(
         'competition.Competition', on_delete=models.CASCADE)

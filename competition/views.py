@@ -50,7 +50,7 @@ class CompetitionDetailView(DetailView):
 
 class CompetitionCreateView(CreateView):
     model = Competition
-    fields = ['name']
+    fields = ['name', 'default_starting_points']
 
     template_name = 'competition/create.html'
 
@@ -101,7 +101,10 @@ class CompetitionResultsView(DetailView):
                              self).get_context_data(**kwargs)
 
         scores = {
-            participant: 1000
+            participant:
+                participant.starting_points
+                if participant.starting_points
+                else self.object.default_starting_points
             for participant in self.object.participant_set.all()
         }
 
