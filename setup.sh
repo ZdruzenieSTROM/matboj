@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ENV_NAME=pyenv
+ENV_NAME=venv
 
 cd $(dirname $0)
 
