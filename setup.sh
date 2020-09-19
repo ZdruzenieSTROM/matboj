@@ -16,5 +16,16 @@ python3 manage.py shell -c "from django.contrib.auth.models import User; User.ob
 
 deactivate
 
-echo -e "#!/bin/bash\n\ncd \$(dirname \$0)\nsource $ENV_NAME/bin/activate\npython3 manage.py runserver 0:8000\ndeactivate\n" > run.sh
+cat > run.sh <<EOF_RUN
+#!/bin/bash
+
+cd \$( dirname \$0 )
+
+source $ENV_NAME/bin/activate
+
+python3 manage.py runserver 0:8000
+
+deactivate
+EOF_RUN
+
 chmod +x run.sh
